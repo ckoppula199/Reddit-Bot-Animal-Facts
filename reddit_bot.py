@@ -1,14 +1,15 @@
 import praw
 import os
 import json
+import random
 
 facts = {}
 
-with open("facts.json") as factData
-	facts = json.loads("facts.json")
+with open("facts.json") as factData:
+	facts = json.load(factData)
 
 #create the reddit instance
-reddit = praw.Reddit("animalFactsBot") #note all my credentials are stored in the praw.ini file. See README for more details
+reddit = praw.Reddit("bot1") #note all my credentials are stored in the praw.ini file. See README for more details
 
 #check to see if file is present, if not create an empty list
 if not os.path.isfile("already_replied.txt"):
@@ -31,4 +32,18 @@ for submission in subreddit.hot(limit=10):
 
 		#get the title in lowercase
 		title = submission.title.lower()
+
+		#if title contains a keyword then add a comment
+		for key in facts.keys():
+			if key in title:
+				print("Replying to: " + submission.title)
+				factReply = "Beep Boop\nDid you know " + random.choice(facts[key])
+				submission.reply(factReply)
+				replied_posts.append(submission.id)
+				break #exit out of loop after 1 comment, dont want to spam
+
+#write updated list of seen posts to the file
+with open("replied_posts.txt", "w") as file:
+	for submission_id in replied_posts:
+		file.write(submission_id + "\n")
 
