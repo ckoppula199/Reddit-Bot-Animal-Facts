@@ -7,10 +7,9 @@ import time
 """
 Data Source Credit: https://gitlab.insrt.uk/BarkingDog/barking-bot/blob/9ce097b0e7421770ef676e609e5fd7559d3cf96c/Data/facts.json
 """
-count = 0
+
 while True:
-	count += 1
-	print(count)
+
 	with open("facts.json") as factData:
 		facts = json.load(factData)
 
@@ -28,7 +27,6 @@ while True:
 			replied_posts = file.read()
 			replied_posts = replied_posts.split("\n") #each id is on a new line
 			replied_posts = list(filter(None, replied_posts)) #removes empty values
-			print(replied_posts)
 
 	#get top ten posts from the subreddit
 	subreddit = reddit.subreddit("AnimalsBeingBros")
@@ -43,15 +41,15 @@ while True:
 			#if title contains a keyword then add a comment
 			for key in facts.keys():
 				if key in title:
-					print("Replying to: " + submission.title)
+				
 					factReply = "Beep Boop\nDid you know " + random.choice(facts[key])
-					#submission.reply(factReply)
+					submission.reply(factReply)
 					replied_posts.append(submission.id)
 					break #exit out of loop after 1 comment, dont want to spam
 
 	#write updated list of seen posts to the file
 	with open("replied_posts.txt", "w") as file:
-		print(replied_posts)
+
 		for submission_id in replied_posts:
 			file.write(submission_id + "\n")
 
