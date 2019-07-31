@@ -11,7 +11,7 @@ Data Source Credit: https://gitlab.insrt.uk/BarkingDog/barking-bot/blob/9ce097b0
 #function to comment on reddit posts
 def commentFacts(sub):
 	subreddit = reddit.subreddit(sub)
-	for submission in subreddit.hot(limit=50):
+	for submission in subreddit.hot(limit=5):
 
 		#check to see if the bot has already replied to this post
 		if submission.id not in replied_posts:
@@ -28,8 +28,9 @@ def commentFacts(sub):
 					replied_posts.append(submission.id)
 					break #exit out of loop after 1 comment, dont want to spam
 
-while True:
 
+while True:
+	
 	with open("facts.json") as factData:
 		facts = json.load(factData)
 
@@ -47,6 +48,7 @@ while True:
 			replied_posts = file.read()
 			replied_posts = replied_posts.split("\n") #each id is on a new line
 			replied_posts = list(filter(None, replied_posts)) #removes empty values
+			#print(replied_posts)
 
 	commentFacts("AnimalsBeingBros")
 	commentFacts("AnimalsBeingDerps")
@@ -59,6 +61,7 @@ while True:
 	commentFacts("interestingasfuck")
 	commentFacts("tumblr")
 	commentFacts("UpliftingNews")
+	
 
 	#if file size is over half a MB then remove the oldest half of the codes as the are likely no longer in scope of top 50 in the subreddit
 	#this prevents the file size getting too big with long run times
@@ -69,6 +72,7 @@ while True:
 
 	#write updated list of seen posts to the file
 	with open("replied_posts.txt", "w") as file:
+		#print(replied_posts)
 		for submission_id in replied_posts:
 			file.write(submission_id + "\n")
 
