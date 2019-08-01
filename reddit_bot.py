@@ -22,11 +22,12 @@ def commentFacts(sub):
 
             # if title contains a keyword then add a comment
             for key in facts.keys():
-                plural = "jhsbvjdvbfhsgfhvdnsb"
+                singular = key
+                plural = key + "s"
                 if key == "cat":
-                    key = " cat "
+                    singular = " cat "
                     plural = " cats " # prevents it appearing in words such as catastrophe
-                if key in title or plural in title:
+                if singular in title or plural in title:
                     print("Replying to: " + submission.title + " in " + sub)
                     factReply = "Did you know " + random.choice(facts[key])
                     submission.reply(factReply)
