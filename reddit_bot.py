@@ -3,10 +3,16 @@ import os
 import json
 import random
 import time
+from datetime import datetime
+from datetime import timedelta
 
 """
 Data Source Credit: https://gitlab.insrt.uk/BarkingDog/barking-bot/blob/9ce097b0e7421770ef676e609e5fd7559d3cf96c/Data/facts.json
 """
+
+# create the reddit instance
+reddit = praw.Reddit("animalFactsBot")  # note all my credentials are stored in the praw.ini file. See README for more details
+
 
 
 # function to comment on reddit posts
@@ -30,7 +36,10 @@ def commentFacts(sub):
                 if singular in title or plural in title:
                     print("Replying to: " + submission.title + " in " + sub)
                     factReply = "Did you know " + random.choice(facts[key])
-                    submission.reply(factReply)
+                    try:
+                        submission.reply(factReply)
+                    except (praw.exceptions.APIException, prawcore.exceptions.Forbidden) as e:
+                        print("Couldnt reply to " + submission.title)
                     replied_posts.append(submission.id)
                     break  # exit out of loop after 1 comment, dont want to spam
 
@@ -42,9 +51,6 @@ while True:
     with open("facts.json") as factData:
         facts = json.load(factData)
 
-    # create the reddit instance
-    reddit = praw.Reddit(
-        "animalFactsBot")  # note all my credentials are stored in the praw.ini file. See README for more details
 
     # check to see if file is present, if not create an empty list
     if not os.path.isfile("replied_posts.txt"):
@@ -69,7 +75,22 @@ while True:
     commentFacts("interestingasfuck")
     commentFacts("tumblr")
     commentFacts("UpliftingNews")
-
+    commentFacts("Panda_Gifs")
+    commentFacts("books")
+    commentFacts("EarthPorn")
+    commentFacts("Documentaries")
+    commentFacts("food")
+    commentFacts("history")
+    commentFacts("LifeProTips")
+    commentFacts("movies")
+    commentFacts("oddlysatisfying")
+    commentFacts("pics")
+    commentFacts("YouShouldKnow")
+    commentFacts("videos")
+    user = reddit.redditor("funAnimalFactz")
+    print("Karma is: {}".format(user.link_karma + user.comment_karma ))
+    print("Next update at {}".format(datetime.now() + timedelta(minutes=45)))
+    
     # if file size is over half a MB then remove the oldest half of the codes as the are likely no longer in scope of top 50 in the subreddit
     # this prevents the file size getting too big with long run times
     if os.path.getsize("replied_posts.txt") > 500000:
@@ -87,4 +108,4 @@ while True:
     # wait an hour before running again
 
     print("Ended iteration: {}".format(count))
-    time.sleep(1800)
+    time.sleep(2700)
